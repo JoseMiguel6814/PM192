@@ -4,9 +4,9 @@ import { StyleSheet, Text, View } from 'react-native';
 import { Button } from 'react-native-web';
 
 const Texto = (props) => {
-  const { contenido } = props
+  const { children } = props
   return (
-    <Text> {contenido} </Text>
+    <Text> {children} </Text>
   );
 }
 
@@ -20,9 +20,9 @@ export default function App() {
       <StatusBar style='auto' />
 
    
-      <Texto contenido="hola"></Texto>
-      <Texto contenido="mundo"></Texto>
-      <Texto contenido="react native"></Texto>
+      <Texto >"hola"</Texto>
+      <Texto >"mundo"</Texto>
+      <Texto >"React native"</Texto>
 
 
       <Button title='presioname'></Button>
