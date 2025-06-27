@@ -1,70 +1,146 @@
-/*Zona 1 Importaciones */
-import React,{useState} from "react";
+import { StatusBar } from 'expo-status-bar';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Text, View, ScrollView, TextInput, TouchableOpacity } from 'react-native';
 
-import { View,Text, TextInput, Button, Alert, StyleSheet } from "react-native-web";
-
-
-
-
-/*Zona 2 Main  */
 export default function App() {
-  const [nombre, setNombre] = useState('');
-  
-  const mostrarAlerta =()=>{
-    if (nombre.trim()=== ''){
-      Alert.alert('error', 'porfavor escribe algo');
-      alert('Escribe algo');
-    }else{
-      Alert.alert('bienvenido', `hola ${nombre}, bienvenido a nuestra app :p`);
-      alert(`Hola ${nombre}, bienvenido`);
+  const [nombres, setNombres] = useState([
+    'Polo', 'Marlen', 'Baruch', 'Gabo', 'Miguel', 'Yahir',
+    'Alexis', 'Marian', 'Gael', 'Mario', 'Paola', 'Toñito',
+    'Diana', 'Daniela', 'Uri'
+  ]);
+
+  const [nuevoNombre, setNuevoNombre] = useState('');
+
+  const [scrollHeight, setScrollHeight] = useState(0);
+  const [contentHeight, setContentHeight] = useState(0);
+  const [scrollY, setScrollY] = useState(0);
+
+  const handleScroll = (event) => {
+    setScrollY(event.nativeEvent.contentOffset.y);
+  };
+
+  const scrollbarHeight = scrollHeight * (scrollHeight / contentHeight);
+  const scrollbarPosition = scrollY * (scrollHeight / contentHeight);
+
+  const agregarNombre = () => {
+    const nombreTrim = nuevoNombre.trim();
+    if (nombreTrim.length > 0) {
+      setNombres([...nombres, nombreTrim]);
+      setNuevoNombre('');
     }
-  }
+  };
+
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Escribe tu nombre:</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Escribe tu nombre"
-        value={nombre}
-        onChangeText={setNombre}
+      <Text style={styles.titulo}>Pase de Lista</Text>
+
+      <View style={styles.inputRow}>
+        <TextInput
+          style={styles.input}
+          placeholder="Agréguese a la lista"
+          placeholderTextColor="#888"
+          value={nuevoNombre}
+          onChangeText={setNuevoNombre}
+          onSubmitEditing={agregarNombre}
+          returnKeyType="done"
+        />
+        <TouchableOpacity style={styles.btnAgregar} onPress={agregarNombre}>
+          <Text style={styles.btnText}>Agregar</Text>
+        </TouchableOpacity>
+      </View>
+
+      <View
+        style={styles.scrollWrapper}
+        onLayout={(event) => setScrollHeight(event.nativeEvent.layout.height)}
       >
-      </TextInput>
+        <ScrollView
+          style={styles.scrollArea}
+          onContentSizeChange={(w, h) => setContentHeight(h)}
+          onScroll={handleScroll}
+          scrollEventThrottle={16}
+          showsVerticalScrollIndicator={false}
+        >
+          {nombres.map((nombre, index) => (
+            <View key={index} style={styles.item}>
+              <Text style={styles.texto}>{nombre}</Text>
+            </View>
+          ))}
+        </ScrollView>
 
-      <Button title="Enviar" onPress={mostrarAlerta}></Button>
+        {contentHeight > scrollHeight && (
+          <View style={[styles.scrollBar, { height: scrollbarHeight, top: scrollbarPosition }]} />
+        )}
+      </View>
+
+      <StatusBar style="light" />
     </View>
-  )
- 
-};
+  );
+}
 
-
-
-
-
-
-
-
-/*Zona 3 estilos */
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
-    pudding: 20,
-    justifyContent: 'center',
+    backgroundColor: '#e0eff1',
+    paddingTop: 50,
+    paddingHorizontal: 20,
   },
-  text: {
-    fontSize: 18,
-    marginBottom: 10,
-    color: 'black',
+  titulo: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#012677',
+    marginBottom: 15,
+    textAlign: 'center',
+  },
+  inputRow: {
+    flexDirection: 'row',
+    marginBottom: 15,
   },
   input: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    marginBottom: 10,
-    padding: 10,
-    borderRadius: 5,
-    backgroundColor: '#f0f0f0',
-    color: 'black',
+    flex: 1,
+    backgroundColor: '#ffffff',
+    color: '#000000',
+    borderRadius: 10,
+    paddingHorizontal: 15,
+    fontSize: 16,
+    height: 45,
+    marginRight: 10,
   },
- 
+  btnAgregar: {
+    backgroundColor: '#012677',
+    borderRadius: 10,
+    paddingHorizontal: 15,
+    justifyContent: 'center',
+  },
+  btnText: {
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+  scrollWrapper: {
+    position: 'relative',
+    height: 500,
+  },
+  scrollArea: {
+    backgroundColor: '#7db4b5',
+    borderRadius: 12,
+    padding: 10,
+    height: 500,
+    borderWidth: 1,
+  },
+  item: {
+    marginBottom: 10,
+    padding: 15,
+    backgroundColor: '#ffffff',
+    borderRadius: 10,
+  },
+  texto: {
+    fontSize: 18,
+    color: '#000000',
+  },
+  scrollBar: {
+    position: 'absolute',
+    width: 8,
+    right: 2,
+    backgroundColor: '#000000',
+    borderRadius: 3,
+  },
 });
